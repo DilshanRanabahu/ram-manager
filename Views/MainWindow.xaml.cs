@@ -69,11 +69,18 @@ public partial class MainWindow : Window
     }
 
 #if DEBUG
-    /// <summary>Development helper: renders each page to a PNG, then exits (run with --screenshot &lt;folder&gt;).</summary>
+    /// <summary>
+    /// Development helper: renders each page to a PNG, then exits (run with --screenshot &lt;folder&gt;).
+    /// The window is made tall enough to show the whole dashboard, and the dev-only admin banner is hidden.
+    /// </summary>
     public async Task CaptureScreenshotsAsync(string folder)
     {
         Directory.CreateDirectory(folder);
-        await Task.Delay(9000);
+        AdminBanner.Visibility = Visibility.Collapsed;
+        Width = 1240;
+        Height = 1100;
+
+        await Task.Delay(45000); // let the usage history chart fill up
         SaveSnapshot(Path.Combine(folder, "dashboard.png"));
 
         ViewModel.NavigateCommand.Execute(ViewModel.Processes);

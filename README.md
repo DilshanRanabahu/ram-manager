@@ -2,6 +2,20 @@
 
 A lightweight Windows memory monitor and optimizer built with C# / .NET 10 and WPF.
 
+![Dashboard](docs/screenshots/dashboard.png)
+
+## Screenshots
+
+### Processes
+Every running process with its icon, CPU, and memory usage. Sort, search, trim memory, or end a process.
+
+![Processes](docs/screenshots/processes.png)
+
+### Settings and alerts
+Choose the refresh interval, tray behavior and high-RAM alert limit.
+
+![Settings](docs/screenshots/settings.png)
+
 ## Features
 
 - **Dashboard**: live memory load gauge, used / available / committed / total, memory
@@ -43,7 +57,8 @@ dotnet build -p:NoAdmin=true
 ```
 
 This uses `app.dev.manifest`, so the app runs without elevation. Monitoring works but cleaning is disabled.
-In Debug builds, `RamManager.exe --screenshot <folder>` renders each page to PNG and exits.
+In Debug builds, `RamManager.exe --screenshot <folder>` renders each page to PNG and exits
+(used for the screenshots in `docs/screenshots`).
 
 ## Project layout
 

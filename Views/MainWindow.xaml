@@ -84,7 +84,7 @@
             </Grid.RowDefinitions>
 
             <!-- Not elevated warning (only in development builds) -->
-            <Border Grid.Row="0" Margin="32,20,32,0" Padding="14,10" CornerRadius="10"
+            <Border x:Name="AdminBanner" Grid.Row="0" Margin="32,20,32,0" Padding="14,10" CornerRadius="10"
                     Background="#26F2A93B" BorderBrush="#55F2A93B" BorderThickness="1">
                 <Border.Style>
                     <Style TargetType="Border">
