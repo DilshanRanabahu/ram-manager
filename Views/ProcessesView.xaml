@@ -1,0 +1,200 @@
+<UserControl x:Class="RamManager.Views.ProcessesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ============ Header ============ -->
+        <DockPanel Margin="0,0,0,20">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBox Style="{StaticResource SearchBox}" Width="260" Tag="Search name, description or PID"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=150}"/>
+                <Button Style="{StaticResource SecondaryButton}" Margin="10,0,0,0" Height="36"
+                        Command="{Binding TrimAllCommand}"
+                        ToolTip="Ask every process to release memory it isn't actively using. Use sparingly.">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE73F;" FontSize="13" Margin="0,0,8,0"/>
+                        <TextBlock Text="Trim all"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Processes" Style="{StaticResource PageTitle}"/>
+                <TextBlock Text="{Binding SummaryText}" Style="{StaticResource PageSubtitle}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ============ Table ============ -->
+        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="8,4,8,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <DataGrid x:Name="ProcessGrid" ItemsSource="{Binding View}" SelectedItem="{Binding SelectedItem}"
+                          Sorting="OnSorting" MouseDoubleClick="OnRowDoubleClick">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Trim memory" Command="{Binding TrimSelectedCommand}">
+                                <MenuItem.Icon>
+                                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE73F;" FontSize="14"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Open file location" Command="{Binding OpenLocationCommand}">
+                                <MenuItem.Icon>
+                                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE838;" FontSize="14"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Copy name" Command="{Binding CopyNameCommand}">
+                                <MenuItem.Icon>
+                                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE8C8;" FontSize="14"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="End process" Command="{Binding EndSelectedCommand}" Foreground="{StaticResource DangerBrush}">
+                                <MenuItem.Icon>
+                                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE711;" FontSize="14"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Name" Width="1.5*" SortMemberPath="Name">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel ToolTip="{Binding ToolTipText}">
+                                        <Grid Width="18" Height="18" Margin="0,0,10,0">
+                                            <TextBlock x:Name="Fallback" Style="{StaticResource Glyph}" Text="&#xECAA;" FontSize="15"
+                                                       HorizontalAlignment="Center" Foreground="{StaticResource MutedTextBrush}"
+                                                       Visibility="Collapsed"/>
+                                            <Image Source="{Binding Icon}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        </Grid>
+                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                    </DockPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Icon}" Value="{x:Null}">
+                                            <Setter TargetName="Fallback" Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Description" Width="1.2*" SortMemberPath="Description">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis"
+                                               Foreground="{StaticResource SubtleTextBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="PID" Width="72" SortMemberPath="Pid"
+                                                HeaderStyle="{StaticResource RightHeader}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Pid}" TextAlignment="Right" Foreground="{StaticResource MutedTextBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="CPU" Width="74" SortMemberPath="Cpu"
+                                                HeaderStyle="{StaticResource RightHeader}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CpuText}" TextAlignment="Right" Foreground="{StaticResource SubtleTextBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="150" SortMemberPath="PrivateWorkingSet" SortDirection="Descending"
+                                                HeaderStyle="{StaticResource RightHeader}">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Memory" ToolTip="Private working set: physical memory used only by this process"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="-6,0">
+                                        <ProgressBar Style="{StaticResource CellBar}" Value="{Binding MemoryFraction, Mode=OneWay}"/>
+                                        <TextBlock Text="{Binding PrivateWorkingSetText}" TextAlignment="Right" FontWeight="SemiBold"
+                                                   VerticalAlignment="Center" Margin="6,0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="120" SortMemberPath="WorkingSet"
+                                                HeaderStyle="{StaticResource RightHeader}">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Working set" ToolTip="Total physical memory used, including memory shared with other processes"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding WorkingSetText}" TextAlignment="Right" Foreground="{StaticResource SubtleTextBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="120" SortMemberPath="Commit"
+                                                HeaderStyle="{StaticResource RightHeader}">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Commit" ToolTip="Private bytes: memory reserved by this process (RAM + page file)"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CommitText}" TextAlignment="Right" Foreground="{StaticResource SubtleTextBrush}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Empty search state -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE721;" FontSize="28" HorizontalAlignment="Center"
+                               Foreground="{StaticResource MutedTextBrush}"/>
+                    <TextBlock Text="No processes match your search" Margin="0,12,0,0" HorizontalAlignment="Center"
+                               Foreground="{StaticResource SubtleTextBrush}"/>
+                </StackPanel>
+
+                <!-- Selection action bar -->
+                <Border Grid.Row="1" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,1,0,0" Padding="8,10,4,2">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Style="{StaticResource SecondaryButton}" Command="{Binding TrimSelectedCommand}"
+                                    ToolTip="Release memory this process isn't actively using">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE73F;" FontSize="13" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Trim memory"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Command="{Binding OpenLocationCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE838;" FontSize="13" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Open location"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource DangerButton}" Margin="8,0,0,0" Command="{Binding EndSelectedCommand}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Glyph}" Text="&#xE711;" FontSize="12" Margin="0,0,8,0"/>
+                                    <TextBlock Text="End process"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource Glyph}" Text="&#xE946;" FontSize="13"
+                                       Foreground="{StaticResource MutedTextBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding SelectionText}" Style="{StaticResource Caption}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,196 @@
+<UserControl x:Class="RamManager.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+        <StackPanel MaxWidth="780" HorizontalAlignment="Left" Margin="0,0,6,0">
+
+            <TextBlock Text="Settings" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Customize how RAM Manager behaves" Style="{StaticResource PageSubtitle}" Margin="0,4,0,24"/>
+
+            <!-- ============ General ============ -->
+            <TextBlock Text="General" Style="{StaticResource SectionTitle}" Margin="0,0,0,10"/>
+            <Border Style="{StaticResource Card}" Padding="0">
+                <StackPanel>
+                    <DockPanel Margin="20,16">
+                        <Border DockPanel.Dock="Right" Background="{StaticResource ControlBrush}" CornerRadius="8" Padding="3"
+                                VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Refresh" Content="1s" IsChecked="{Binding Refresh1}"/>
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Refresh" Content="2s" IsChecked="{Binding Refresh2}"/>
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Refresh" Content="5s" IsChecked="{Binding Refresh5}"/>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE895;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Refresh interval" FontSize="14"/>
+                            <TextBlock Text="How often memory and process information is updated" Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border Style="{StaticResource Divider}"/>
+
+                    <DockPanel Margin="20,16">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource ToggleSwitch}" IsChecked="{Binding CloseToTray}" VerticalAlignment="Center"/>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE8A7;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Keep running in the system tray" FontSize="14"/>
+                            <TextBlock Text="Closing the window hides it to the tray instead of exiting" Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border Style="{StaticResource Divider}"/>
+
+                    <DockPanel Margin="20,16">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource ToggleSwitch}" IsChecked="{Binding ConfirmEndProcess}" VerticalAlignment="Center"/>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE7BA;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Confirm before ending processes" FontSize="14"/>
+                            <TextBlock Text="Ask for confirmation so you don't close something by accident" Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ============ Alerts ============ -->
+            <TextBlock Text="Alerts" Style="{StaticResource SectionTitle}" Margin="0,28,0,10"/>
+            <Border Style="{StaticResource Card}" Padding="0">
+                <StackPanel>
+                    <DockPanel Margin="20,16">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource ToggleSwitch}" IsChecked="{Binding HighMemoryAlerts}" VerticalAlignment="Center"/>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xEA8F;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="High memory alert" FontSize="14"/>
+                            <TextBlock Text="Get a Windows notification when memory usage stays above the limit" Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <DockPanel Margin="52,0,20,16" IsEnabled="{Binding HighMemoryAlerts}">
+                        <DockPanel.Style>
+                            <Style TargetType="DockPanel">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DockPanel.Style>
+                        <Border DockPanel.Dock="Right" Background="{StaticResource ControlBrush}" CornerRadius="8" Padding="3"
+                                VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Threshold" Content="75%" IsChecked="{Binding Threshold75}"/>
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Threshold" Content="80%" IsChecked="{Binding Threshold80}"/>
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Threshold" Content="85%" IsChecked="{Binding Threshold85}"/>
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Threshold" Content="90%" IsChecked="{Binding Threshold90}"/>
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Threshold" Content="95%" IsChecked="{Binding Threshold95}"/>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="Alert when memory usage is above" Style="{StaticResource Caption}" VerticalAlignment="Center"/>
+                    </DockPanel>
+
+                    <Border Style="{StaticResource Divider}"/>
+
+                    <DockPanel Margin="20,16">
+                        <CheckBox DockPanel.Dock="Right" Style="{StaticResource ToggleSwitch}" IsChecked="{Binding GrowingAppAlerts}" VerticalAlignment="Center"/>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE9D9;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Growing app alert" FontSize="14"/>
+                            <TextBlock Text="Notify when an app's memory keeps rising for 10 minutes (possible memory leak)"
+                                       Style="{StaticResource Caption}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border Style="{StaticResource Divider}"/>
+
+                    <DockPanel Margin="20,16">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource SecondaryButton}" Content="Send test"
+                                Command="{Binding TestNotificationCommand}" VerticalAlignment="Center"/>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE7E7;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Test notification" FontSize="14"/>
+                            <TextBlock Text="Check that Windows shows RAM Manager notifications (Do not disturb can hide them)"
+                                       Style="{StaticResource Caption}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ============ About ============ -->
+            <TextBlock Text="About" Style="{StaticResource SectionTitle}" Margin="0,28,0,10"/>
+            <Border Style="{StaticResource Card}" Padding="0">
+                <StackPanel>
+                    <DockPanel Margin="20,18">
+                        <Border DockPanel.Dock="Right" CornerRadius="10" Padding="10,4" VerticalAlignment="Center">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="#2634D399"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAdmin}" Value="False">
+                                            <Setter Property="Background" Value="#26F2A93B"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="12" Margin="0,0,6,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource Glyph}">
+                                            <Setter Property="Text" Value="&#xE83D;"/>
+                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAdmin}" Value="False">
+                                                    <Setter Property="Text" Value="&#xE7BA;"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="{Binding AdminText}" FontSize="12" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAdmin}" Value="False">
+                                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                        <Image Source="/Assets/logo.png" Width="40" Height="40" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,14,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="RAM Manager" FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding VersionText}" Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border Style="{StaticResource Divider}"/>
+
+                    <DockPanel Margin="20,16">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource SecondaryButton}" Content="Open folder"
+                                Command="{Binding OpenSettingsFolderCommand}" VerticalAlignment="Center"/>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE8B7;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="Settings file" FontSize="14"/>
+                            <TextBlock Text="{Binding SettingsPath}" Style="{StaticResource Caption}" Margin="0,3,0,0" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border Style="{StaticResource Divider}"/>
+
+                    <DockPanel Margin="20,16">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource DangerButton}" Content="Exit"
+                                Command="{Binding ExitCommand}" VerticalAlignment="Center" Padding="18,7"/>
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE7E8;" Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,16,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Exit RAM Manager" FontSize="14"/>
+                            <TextBlock Text="Stop monitoring and remove the tray icon" Style="{StaticResource Caption}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
